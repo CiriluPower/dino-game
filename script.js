@@ -2,34 +2,45 @@ const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
 let dino = { x: 50, y: 150, width: 30, height: 30, dy: 0, gravity: 0.5, jumpPower: -10, onGround: true };
+
+// Cargar la imagen del dinosaurio
+const dinoImage = new Image();
+dinoImage.src = 'dino_sprite.png'; // Asegúrate de tener la imagen en la misma carpeta que tu script
+
 let obstacles = [];
 let score = 0;
 let gameRunning = true;
 
+// Función para dibujar el dinosaurio con la imagen
 function drawDino() {
-    ctx.fillStyle = "green";
-    ctx.fillRect(dino.x, dino.y, dino.width, dino.height);
+    ctx.drawImage(dinoImage, dino.x, dino.y, dino.width, dino.height); // Usa la imagen cargada
 }
 
+// Función para dibujar los obstáculos (vamos a usar círculos)
 function drawObstacles() {
-    ctx.fillStyle = "red";
     obstacles.forEach(obstacle => {
-        ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+        ctx.beginPath();
+        ctx.arc(obstacle.x, obstacle.y, obstacle.radius, 0, 2 * Math.PI); // Dibuja un círculo en lugar de un rectángulo
+        ctx.fillStyle = "brown"; // Color del obstáculo
+        ctx.fill();
     });
 }
 
 function updateObstacles() {
     if (Math.random() < 0.02) {
-        obstacles.push({ x: canvas.width, y: 170, width: 20, height: 30 });
+        let radius = Math.random() * 15 + 10; // Obstáculo con tamaño aleatorio
+        obstacles.push({ x: canvas.width, y: 170 - radius, radius: radius });
     }
     obstacles.forEach(obstacle => obstacle.x -= 5);
-    obstacles = obstacles.filter(obstacle => obstacle.x + obstacle.width > 0);
+    obstacles = obstacles.filter(obstacle => obstacle.x + obstacle.radius > 0); // Mantén los obstáculos en pantalla
 }
 
 function checkCollision() {
     for (let obstacle of obstacles) {
-        if (dino.x < obstacle.x + obstacle.width && dino.x + dino.width > obstacle.x &&
-            dino.y < obstacle.y + obstacle.height && dino.y + dino.height > obstacle.y) {
+        const distX = Math.abs(dino.x + dino.width / 2 - obstacle.x);
+        const distY = Math.abs(dino.y + dino.height / 2 - obstacle.y);
+        
+        if (distX < obstacle.radius && distY < obstacle.radius) {
             gameRunning = false;
             alert("¡Game Over! Puntuación: " + score);
             document.location.reload();
