@@ -16,13 +16,11 @@ function drawDino() {
     ctx.drawImage(dinoImage, dino.x, dino.y, dino.width, dino.height); // Usa la imagen cargada
 }
 
-// Función para dibujar los obstáculos (vamos a usar círculos)
+// Función para dibujar los obstáculos como rectángulos
 function drawObstacles() {
     obstacles.forEach(obstacle => {
-        ctx.beginPath();
-        ctx.arc(obstacle.x, obstacle.y, obstacle.radius, 0, 2 * Math.PI); // Dibuja un círculo en lugar de un rectángulo
         ctx.fillStyle = "brown"; // Color del obstáculo
-        ctx.fill();
+        ctx.fillRect(obstacle.x - obstacle.radius, 150 - obstacle.radius, obstacle.radius * 2, obstacle.radius * 2); // Rectángulo en lugar de círculo
     });
 }
 
